@@ -1,16 +1,16 @@
 # (H)TTP (E)vent (E)mitter
 
-### Installing
+## Installing
 
 
 ```
 npm i hee
 ```
 
-### Example
+## Example
 
-#####Client (client.html)
-```
+#### Client (client.html)
+```html
 <!DOCTYPE html>
 <html>
 
@@ -27,8 +27,8 @@ npm i hee
 
 ```
 
-#####Server (server.mjs)
-```
+#### Server (server.mjs)
+```javascript
 import HttpEventEmitter from 'hee'
 
 const hee = new HttpEventEmitter(8080)
@@ -43,31 +43,31 @@ hee.on('event', (params) => {
 
 ```
 
-#####Run
+#### Run
 ```
 node --experimental-modules server.mjs
 ```
 
 Hee is using experimental ECMAScript modules https://nodejs.org/api/esm.html
 
-##API
-```
+## API
+```javascript
 const hee = new HttpEventEmitter([PORT])
 ```
-###Events
-```
+## Events
+```javascript
 hee.on("subscription", params)
 ```
 Emitted when a new client GET a path to listen.
 
-```
+```javascript
 hee.on("event", params)
 ```
 Emitted when a client POST to a path.
 
 
 Params:
-```
+```javascript
 { 
   path: '/namespace/id/1',
   id: 'ad5a71fc-abc7-4d92-a585-d56934047ce9',
