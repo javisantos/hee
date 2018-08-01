@@ -2,7 +2,7 @@
   "name": "hee",
   "version": "1.0.0",
   "description": "",
-  "main": "./lib/hee.js",
+  "main": "index.mjs",
   "author": "Javi Santos <mail@javisantos.com>",
   "license": "MIT",
   "scripts": {
