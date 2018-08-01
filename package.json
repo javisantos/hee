@@ -1,0 +1,18 @@
+{
+  "name": "sshare",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/hee.js",
+  "author": "Javi Santos <mail@javisantos.com>",
+  "license": "MIT",
+  "scripts": {
+    "example": "node --experimental-modules ./example/server.mjs",
+    "standard": "standard ./lib/hee.mjs"
+  },
+  "dependencies": {
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "standard": "^11.0.1"
+  }
+}

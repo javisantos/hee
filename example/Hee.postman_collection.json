@@ -1,0 +1,31 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Hee",
+		"_postman_id": "2fdeb14c-03c6-52b2-3b0c-c7037c91d3e0",
+		"description": "HTTP Event Emitter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8080/namespace/id/1",
+			"request": {
+				"url": "http://localhost:8080/namespace/id/1",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"payload\": \"Hello World\"}"
+				},
+				"description": "Hee example event post"
+			},
+			"response": []
+		}
+	]
+}
