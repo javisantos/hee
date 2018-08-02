@@ -7,12 +7,14 @@
   "license": "MIT",
   "scripts": {
     "example": "node --experimental-modules ./example/server.mjs",
-    "standard": "standard ./lib/hee.mjs --fix"
+    "standard": "standard ./lib/hee.mjs --fix",
+    "build": "node-minify --compressor 'babel-minify, gcc' --input './lib/hee-basecomponent.mjs' --output './public/component.mjs'"
   },
   "dependencies": {
     "uuid": "^3.3.2"
   },
   "devDependencies": {
+    "node-minify": "^3.1.2",
     "standard": "^11.0.1"
   }
 }
