@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "example": "node --experimental-modules ./example/server.mjs",
-    "standard": "standard ./lib/hee.mjs"
+    "standard": "standard ./lib/hee.mjs --fix"
   },
   "dependencies": {
     "uuid": "^3.3.2"
