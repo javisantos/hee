@@ -6,7 +6,7 @@
   "author": "Javi Santos <mail@javisantos.com>",
   "license": "MIT",
   "scripts": {
-    "example": "node --experimental-modules ./example/server.mjs",
+    "server": "npm run build && node --experimental-modules ./example/server.mjs",
     "standard": "standard ./lib/hee.mjs --fix",
     "build": "node-minify --compressor 'babel-minify, gcc' --input './lib/hee-basecomponent.mjs' --output './public/component.mjs'"
   },
