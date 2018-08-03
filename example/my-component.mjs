@@ -26,15 +26,12 @@ import ("http://localhost:8080/component.mjs").then((Module) => {
         rendered() {}
 
         ready() {
-            console.log('Component 1 connected with the event source')
             this.eventSource.addEventListener('changePlanet', (e) => {
                 this.setState(JSON.parse(e.data), true)
             })
         }
 
         helloMars(planetColor, planet) {
-            console.log('inside component!!', planetColor, planet)
-            console.log(this)
             this.postState({
                 type: 'changePlanet',
                 planetColor,
