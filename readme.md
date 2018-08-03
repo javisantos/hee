@@ -1,4 +1,4 @@
-# (H)TTP (E)vent (E)mitter
+# (H)ttp (E)vent (E)mitter
 
 ## Installing
 
