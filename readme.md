@@ -1,7 +1,8 @@
 # (H)ttp (E)vent (E)mitter
 
-## Installing
+(H)ttp (E)vent (E)mitter
 
+## Installing
 
 ```
 npm i hee
