@@ -1,5 +1,5 @@
 /* global HTMLElement customElements EventSource fetch */
-import ("http://localhost:8080/component.mjs").then((Module) => {
+import ("https://unpkg.com/hee@1.0.4/public/component.mjs").then((Module) => {
     //import ('../lib/hee-basecomponent.mjs').then((Module) => {
 
     const {
