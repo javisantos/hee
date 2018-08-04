@@ -17,9 +17,9 @@ npm i hee
 
 <body>
     <script type="text/javascript">
-        var source = new EventSource("http://localhost:8080/namespace/id/1");
+        var source = new EventSource("http://localhost:8080/");
         source.onmessage = function (e) {
-            document.body.innerHTML += `${e.lastEventId!==''?e.lastEventId:"init"}: ${e.data} <br>`;
+            document.body.innerHTML += `${e.data} <br>`;
         };
     </script>
 </body>

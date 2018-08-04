@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <script type="text/javascript">
+        var source = new EventSource("http://localhost:8080/");
+        source.onmessage = function (e) {
+            document.body.innerHTML += `${e.data} <br>`;
+        };
+    </script>
+</body>
+
+</html>

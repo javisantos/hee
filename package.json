@@ -7,15 +7,15 @@
   "license": "MIT",
   "scripts": {
     "start": "npm run build && node --experimental-modules server.mjs",
-    "standard": "standard ./lib/hee.mjs --fix",
-    "build": "node-minify --compressor 'babel-minify, gcc' --input './lib/hee-basecomponent.mjs' --output './public/component.mjs'"
+    "standard": "standard ./src/hee.mjs --fix",
+    "build": "node-minify --compressor 'babel-minify, uglify-es' --input './src/my-hee-base-element.mjs' --output './public/my-hee-base-element.mjs'"
   },
   "dependencies": {
-    "my-base-element": "^1.0.1",
+    "mime-types": "^2.1.19",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "node-minify": "^3.1.2",
+    "node-minify": "^3.2.0",
     "standard": "^11.0.1"
   }
 }
