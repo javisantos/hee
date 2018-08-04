@@ -154,7 +154,7 @@ const execute = (stringFunction, context) => {
     }, {})
   var argsObject = Object.keys(argsToObject).map((k) => argsToObject[k])
   if (typeof context[funcName] === 'function') {
-    return context[funcName](...argsObject.reverse())
+    return context[funcName](...argsObject)
   } else {
     throw new Error(`The function ${funcName} in not defined.`)
   }
