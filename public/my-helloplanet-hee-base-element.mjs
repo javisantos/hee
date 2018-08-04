@@ -31,7 +31,7 @@ class HelloPlanet extends MyHeeBaseElement {
 
   rendered () {
     var helloBtn = document.querySelector(HelloPlanet.is.toUpperCase()).shadowRoot.querySelector('#sayhello')
-    helloBtn.addEventListener('click', (event) => this.onClick(event, helloBtn.attributes['id'].value))
+    helloBtn.addEventListener('click', (event) => this.onClick(event, 'sayhello'))
   }
 
   ready () {} // Minimal HeeBaseElement implementation
@@ -41,10 +41,11 @@ class HelloPlanet extends MyHeeBaseElement {
   }
 
   onClick (event, id) {
+    console.log(event)
     helpers.clickTarget(event, id, this)
   }
 
-  helloMars (planetColor, planet) {
+  helloMars (planet, planetColor) {
     this.postState({type: 'changePlanet', planetColor, planet})
   }
 
