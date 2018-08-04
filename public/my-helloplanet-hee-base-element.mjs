@@ -4,18 +4,13 @@ import { MyHeeBaseElement, html, helpers } from './my-hee-base-element.mjs'
 class HelloPlanet extends MyHeeBaseElement {
   constructor () {
     super()
-    document.querySelector(HelloPlanet.is.toUpperCase()).addEventListener('click', (event) => {
-      if (event.originalTarget && event.originalTarget.attributes['onclick']) {
-        this.onClick(event)
-      }
-      if (event.path && event.path[0].attributes['onclick']) {
-        this.onClick(event)
-      }
-    })
+    this.noop() // Standard hack
   }
 
+  noop () {}
+
   static get observedAttributes () {
-    return ['greetings', 'planet']
+    return ['greetings', 'planet', 'planetColor']
   }
 
   static get observedSSE () {
@@ -29,22 +24,24 @@ class HelloPlanet extends MyHeeBaseElement {
   get initialState () {
     return {
       otherPlanet: 'Mars  ',
-      greetings: 'Hello',
+      greetings: 'Bye',
       planet: 'World'
     }
   }
 
-  rendered () {}
+  rendered () {
+    var helloBtn = document.querySelector(HelloPlanet.is.toUpperCase()).shadowRoot.querySelector('#sayhello')
+    helloBtn.addEventListener('click', (event) => this.onClick(event, helloBtn.attributes['id'].value))
+  }
 
-  ready () {}
+  ready () {} // Minimal HeeBaseElement implementation
 
   onChangePlanet (e) {
     this.setState(JSON.parse(e.data))
   }
 
-  onClick (event) {
-    var stringFunction = event.path ? event.path[0].attributes['onclick'].value : event.originalTarget.attributes['onclick'].value
-    helpers.execute(stringFunction, this)
+  onClick (event, id) {
+    helpers.clickTarget(event, id, this)
   }
 
   helloMars (planetColor, planet) {
@@ -71,10 +68,10 @@ class HelloPlanet extends MyHeeBaseElement {
   get template () {
     return html`
                 <div>
-                <span class="black">${this.state.greetings}</span>
-                <span class="${this.state.planetColor ? this.state.planetColor : 'blue'}">${this.state.planet}</span>
-                <hr>
-                <button id="sayhello" onclick="${() => helloMars({planet: this.state.otherPlanet, planetColor: 'red'})}"> Say hello to Mars</button>
+                    <span class="black">${this.state.greetings}</span>
+                    <span class="${this.state.planetColor ? this.state.planetColor : 'blue'}">${this.state.planet}</span>
+                    <hr>
+                    <button id="sayhello" onclick="${() => helloMars({planet: this.state.otherPlanet, planetColor: 'red'})}"> <slot name="buttonText">{{buttonText}}</slot> </button>
                 </div>
 
                 `

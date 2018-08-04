@@ -160,5 +160,21 @@ const execute = (stringFunction, context) => {
   }
 }
 
-const helpers = {execute}
+const getTarget = (event, id) => {
+  event = event || window.event
+  var e = { event: event,
+    target: event.path ? event.path.find((each) => {
+      return each.id === id
+    }) : event.target
+  }
+  return e
+}
+
+const clickTarget = (event, id, context) => {
+  var e = getTarget(event, id)
+  var stringFunction = e.target.attributes['onclick'].value
+  execute(stringFunction, context)
+}
+
+const helpers = {execute, getTarget, clickTarget}
 export { MyBaseElement, html, helpers }

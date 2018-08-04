@@ -7,11 +7,6 @@ class MyHeeBaseElement extends MyBaseElement {
     this.source = this.dataset.eventsource ? this.dataset.eventsource : null
     if (!this.source) throw new Error('You need to define data-eventsource attribute')
     if (!window.eventSources) window.eventSources = new Map()
-    window.addEventListener('beforeunload', (event) => {
-      window.eventSources.get(this.source).close()
-    })
-    window.addEventListener('load', (event) => {
-    })
   }
 
   static get is () {
@@ -20,6 +15,11 @@ class MyHeeBaseElement extends MyBaseElement {
 
   connected () {
     if (this.source) this.initEventSource()
+    window.addEventListener('beforeunload', (event) => {
+      window.eventSources.get(this.source).close()
+    })
+    window.addEventListener('load', (event) => {
+    })
     this.loaded = true
   }
 
