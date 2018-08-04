@@ -6,11 +6,12 @@
   "author": "Javi Santos <mail@javisantos.com>",
   "license": "MIT",
   "scripts": {
-    "server": "npm run build && node --experimental-modules ./example/server.mjs",
+    "start": "npm run build && node --experimental-modules server.mjs",
     "standard": "standard ./lib/hee.mjs --fix",
     "build": "node-minify --compressor 'babel-minify, gcc' --input './lib/hee-basecomponent.mjs' --output './public/component.mjs'"
   },
   "dependencies": {
+    "my-base-element": "^1.0.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

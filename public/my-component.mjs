@@ -1,13 +1,16 @@
+
+
 /* global HTMLElement customElements EventSource fetch */
-import ("http://localhost:8080/component.mjs").then((Module) => {
+import ("http://localhost:8080/my-hee-base-element.mjs").then((Module) => {
     //import ('../lib/hee-basecomponent.mjs').then((Module) => {
 
     const {
-        Component,
-        html
+        MyHeeBaseElement,
+        html,
+        helpers
     } = Module
 
-    class MyComponent extends Component {
+    class MyComponent extends MyHeeBaseElement {
         constructor() {
             super()
         }
@@ -16,8 +19,13 @@ import ("http://localhost:8080/component.mjs").then((Module) => {
             return ['greetings', 'planet']
         }
 
+        static get observedEvents() {
+            return ["click", "changePlanet"] /* Array of observed events [Array]. */
+        }
+
         get initialState() {
             return {
+                otherPlanet: "Mars",
                 greetings: 'Hello',
                 planet: 'World'
             }
@@ -26,12 +34,26 @@ import ("http://localhost:8080/component.mjs").then((Module) => {
         rendered() {}
 
         ready() {
-            this.eventSource.addEventListener('changePlanet', (e) => {
-                this.setState(JSON.parse(e.data), true)
-            })
+
+           console.log("GO!")
+
+        }
+        
+        onChangePlanet (e) {
+            console.log("panet change", e.data)
+            this.setState(JSON.parse(e.data))
+        }
+
+        onEvent(event) {
+
+            if (!event.path[0].attributes['onclick']) return
+            var stringFunction = event.path[0].attributes['onclick'].value
+            helpers.execute(stringFunction, this)
+            
         }
 
         helloMars(planetColor, planet) {
+            console.log("posting", planet)
             this.postState({
                 type: 'changePlanet',
                 planetColor,
@@ -62,11 +84,11 @@ import ("http://localhost:8080/component.mjs").then((Module) => {
                     <span class="black">${this.state.greetings}</span>
                     <span class="${this.state.planetColor ? this.state.planetColor : 'blue'}">${this.state.planet}</span>
                     <hr>
-                    <button onclick="${() => helloMars({planet: 'Mars', planetColor: 'red'})}"> Say hello to Mars</button>
+                    <button onclick="${() => helloMars({planet: this.state.otherPlanet, planetColor: 'red'})}"> Say hello to Mars</button>
                 </div>
                 
                 `
         }
     }
-    Component.define('my-component', MyComponent)
+    MyHeeBaseElement.define('my-component', MyComponent)
 })

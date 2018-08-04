@@ -1,4 +1,4 @@
-import HttpEventEmitter from '../index.mjs'
+import HttpEventEmitter from './index.mjs'
 
 const hee = new HttpEventEmitter(8080)
 
