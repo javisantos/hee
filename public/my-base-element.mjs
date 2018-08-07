@@ -1,9 +1,9 @@
-/* global HTMLElement customElements  */
+/* global HTMLElement customElements */
 class MyBaseElement extends HTMLElement {
   constructor () {
     super()
 
-    this.state = this.initialState
+    this.state = Object.assign({}, this.state, this.initialState)
     this.loaded = false
 
     var style = document.createElement('style')
@@ -31,25 +31,40 @@ class MyBaseElement extends HTMLElement {
 
   /* Beginning of Implementation. */
 
+  get initialState () { return {} /* Called in constructor [Object]. */ }
+
   static get observedAttributes () {
-    return [] /* Array of observed attributes. [Array]. */
-  }
-  static get observedEvents () {
-    return [] /* Array of observed events [Array]. */
-  }
-
-  get initialState () {
-    return { /* Called in constructor [Object]. */ }
+    return [] /* Array of observed attributes [Array].
+    return ['greetings', 'planet', 'planetcolor']
+    */
   }
 
-  // LiveCircle
-  connected () { /* Triggered when the component is connected. */ }
-  rendered () { /* Triggered each time the component is rendered. */ }
-  disconnected () { /* Triggered when the component is disconnected. */ }
+  get observedEvents () {
+    return [] /* Array of observed events [Array].
+    return [{
+      target: 'button[id=sayhello]',
+      type: 'click',
+      handler: () => this.helloMars(this.state.otherPlanet, 'red')
+    }]
+
+    eventHandler (event) {
+      switch (event.type) {
+        case 'click':
+         break
+        default:
+          break
+      }
+    }
+    on*[Type] (event) {}
+    */
+  }
 
   // Events
   onState () { /* Called when state changes (state). */ }
   onChange () { /* Called when attribute change (attrName, oldVal, newVal). */ }
+  onRender () { /* Called when render(). */ }
+  onConnect () { /* Called when connectedCallback(). */ }
+  onDisconnect () { /* Called when disconnectedCallback. */ }
 
   // Rendering
   get style () {
@@ -61,59 +76,73 @@ class MyBaseElement extends HTMLElement {
 
   /* End of Implementation. */
 
-  eventHandler (event) {
-    switch (event.type) {
-      case 'click':
-        break
-      /* ... */
-      default:
-        break
-    }
-  }
-
   connectedCallback () {
-    this.render()
-    this.connected()
+    this.onConnect()
     this.loaded = true
-
-    // var oldAddEventListener = EventTarget.prototype.addEventListener
-
-    // EventTarget.prototype.addEventListener = function (eventName, eventHandler) {
-    //   oldAddEventListener.call(this, eventName, function (event) {
-    //     let eventNameCapitalized = `on${eventName.replace(/^\w/, c => c.toUpperCase())}`
-    //     if (typeof this[eventNameCapitalized] === 'function') this[eventNameCapitalized](event)
-    //     this.eventHandler(event)
-    //   })
-    // }
-
-  // this.constructor.observedEvents.forEach(element => {
-  //   this.addEventListener(element)
-  // })
+    var prestate = {}
+    for (var attr in this.attributes) {
+      prestate[this.attributes[attr].nodeName] = this.attributes[attr].value
+    }
+    this.setState(Object.assign({}, this.initialState, prestate), false)
   }
 
   disconnectedCallback () {
-    this.disconnected()
+    this.onDisconnect()
   }
 
-  render () {
-    this.shadow.querySelectorAll('DIV')[0].innerHTML = this.template
-    this.rendered()
+  render (initial = false) {
+    if (!initial) {
+      console.log('RENDER', this.state)
+      this.shadow.querySelectorAll('DIV')[0].innerHTML = this.template
+      this.setListeners(true)
+    } else {
+      console.log('RENDER INITIAL', this.state)
+      this.setListeners(false)
+    }
+
+    this.onRender()
   }
 
-  setState (data, shouldRender) {
-    Object.entries(data).forEach((attr) => {
-      this.setAttribute(attr[0], attr[1])
+  setListeners (remove) {
+    if (remove) {
+      this.observedEvents.forEach(evl => {
+        this.shadow.querySelector(evl.target).removeEventListener(evl.type, evl.handler)
+      })
+    }
+    this.observedEvents.forEach(evl => {
+      console.log('addingto', evl.handler)
+      var matches = this.shadow.querySelectorAll(evl.target)
+      matches.forEach(item => {
+        item.addEventListener(evl.type, (event, handler = evl.handler) => {
+          let eventNameCapitalized = `on${evl.type.replace(/^\w/, c => c.toUpperCase())}`
+          if (typeof this[eventNameCapitalized] === 'function') this[eventNameCapitalized](event)
+          if (typeof this.eventHandler === 'function') this.eventHandler(event)
+          if (typeof handler === 'function') handler(event)
+        })
+      })
     })
+  }
+
+  setState (data, shouldAddAttrs = true) {
     const newState = Object.assign({}, this.state, data)
     this.state = newState
     this.onState(this.state)
-    if (shouldRender || this.loaded) this.render()
+    if (shouldAddAttrs && this.loaded) {
+      Object.entries(data).forEach((attr) => {
+        this.setAttribute(attr[0], attr[1])
+      })
+    }
+    this.render()
   }
 
   attributeChangedCallback (attrName, oldVal, newVal) {
     const attrs = {}
     attrs[attrName] = newVal
-    if (oldVal !== newVal) this.setState(attrs)
+
+    if (oldVal !== newVal && this.state[attrName] !== newVal && this.loaded) {
+      this.setState(attrs)
+      this.render()
+    }
     this.onChange(attrName, oldVal, newVal)
   }
 }
@@ -162,7 +191,8 @@ const execute = (stringFunction, context) => {
 
 const getTarget = (event, id) => {
   event = event || window.event
-  var e = { event: event,
+  var e = {
+    event: event,
     target: event.path ? event.path.find((each) => {
       return each.id === id
     }) : event.target

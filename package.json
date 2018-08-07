@@ -8,7 +8,7 @@
   "scripts": {
     "start": "npm run build && node --experimental-modules server.mjs",
     "standard": "standard ./src/hee.mjs --fix",
-    "build": "node-minify --compressor 'babel-minify, uglify-es' --input './src/my-hee-base-element.mjs' --output './public/my-hee-base-element.mjs'"
+    "build": "node-minify --compressor 'uglify-es, babel-minify' --input './src/my-hee-base-element.mjs' --output './public/my-hee-base-element.mjs'"
   },
   "dependencies": {
     "mime-types": "^2.1.19",
