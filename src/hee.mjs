@@ -14,10 +14,10 @@ class HttpEventEmitter extends EventEmitter {
   constructor (port, encoding) {
     super()
     this.encoding = typeof encoding === 'string' ? encoding : 'json'
-    this.port = typeof port === 'number' ? port : 8080
+    this.port = typeof port === 'number' ? port : 8081
     const server = http.createServer()
     server.on('request', this.onRequest.bind(this))
-    server.listen(port, () => this.emit('ready'))
+    server.listen(port, () => super.emit('ready'))
   }
 
   parse (data) {
@@ -32,6 +32,12 @@ class HttpEventEmitter extends EventEmitter {
     if (req.url === '/favicon.ico') {
       res.statusCode = 200 // really?
       res.end()
+      return
+    }
+
+    if (req.url === '/') {
+      res.statusCode = 200
+      res.end('Http Event Emitter')
       return
     }
 
@@ -55,22 +61,30 @@ class HttpEventEmitter extends EventEmitter {
         res.end()
       }
     }
-    this.emit('append', req.url)
+    super.emit('append', req.url)
   }
 
   onSubscription (req, res) {
     let hash = req.url.slice(1)
-    this.emit('subscription', hash)
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
+    res.setHeader('X-Accel-Buffering', 'no')
     res.setHeader('Connection', 'keep-alive')
     let UUID = uuidv4()
-    let payload = `event: ready\nid: ${UUID}\ndata: {}\n\n`
+    let payload = `retry: 5000\nevent: ready\nid: ${UUID}\ndata: {}\n\n`
     res.write(Buffer.from(payload), payload.length)
     res.statusCode = 200
     const push = (array, value) => array.concat([value])
     const arrayAlloc = []
     keys.has(hash) ? keys.set(hash, push(keys.get(hash), res)) : keys.set(hash, push(arrayAlloc, res))
+
+    var ip = (req.headers['x-forwarded-for'] || '').split(',').pop() ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress
+
+    super.emit('subscription', hash)
+    this.emit(hash, {type: 'subscription', ip})
   }
 
   onEvent (req, res) {
@@ -83,9 +97,8 @@ class HttpEventEmitter extends EventEmitter {
       .on('end', () => {
         try {
           var parsed = this.parse(body)
-          let UUID = uuidv4()
-          this.emit('event', Object.assign({id: UUID, data: parsed, hash}, {}))
-          this.broadcast(hash, `${parsed.type ? `event: ${parsed.type}` : `event: message`}\nid: ${UUID}\ndata: ${body}\n\n`)
+          super.emit('event', Object.assign({data: parsed, hash}, {}))
+          this.emit(hash, parsed)
           res.statusCode = 202
           res.end()
         } catch (e) {
@@ -95,11 +108,13 @@ class HttpEventEmitter extends EventEmitter {
       })
   }
 
-  broadcast (hash, payload) {
+  emit (hash, payload) {
+    let UUID = uuidv4()
+    var content = `retry: 5000\n${payload.type ? `event: ${payload.type}` : `event: message`}\nid: ${UUID}\ndata: ${JSON.stringify(payload)}\n\n`
     if (keys.has(hash)) {
       this.gc()
       keys.get(hash).forEach((client, key) => {
-        client.write(Buffer.from(payload), payload.length)
+        client.write(Buffer.from(content), content.length)
       })
     }
   }

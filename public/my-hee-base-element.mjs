@@ -44,7 +44,7 @@ class MyHeeBaseElement extends MyBaseElement {
 
     this.eventSource.onopen = (e) => {
       // TODO Dispatch custom event
-
+      clearInterval(this.reconnectionInterval ? this.reconnectionInterval : null)
     }
 
     this.eventSource.onerror = (e) => {

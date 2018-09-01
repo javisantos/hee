@@ -110,7 +110,6 @@ class MyBaseElement extends HTMLElement {
       })
     }
     this.observedEvents.forEach(evl => {
-      console.log('addingto', evl.handler)
       var matches = this.shadow.querySelectorAll(evl.target)
       matches.forEach(item => {
         item.addEventListener(evl.type, (event, handler = evl.handler) => {
@@ -138,7 +137,7 @@ class MyBaseElement extends HTMLElement {
   attributeChangedCallback (attrName, oldVal, newVal) {
     const attrs = {}
     attrs[attrName] = newVal
-
+    console.log('Attr', attrName, oldVal , newVal)
     if (oldVal !== newVal && this.state[attrName] !== newVal && this.loaded) {
       this.setState(attrs)
       this.render()
