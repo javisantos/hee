@@ -1,5 +1,5 @@
 /* global  */
-import { MyHeeBaseElement, html } from './my-hee-base-element.mjs'
+import {MyHeeBaseElement, html} from './my-hee-base-element.mjs'
 
 class HelloPlanet extends MyHeeBaseElement {
   constructor () {
@@ -14,11 +14,18 @@ class HelloPlanet extends MyHeeBaseElement {
   }
 
   get observedEvents () {
-    return [{
-      target: '#sayhello',
-      type: 'click',
-      handler: () => this.helloMars(this.state.otherplanet, 'red')
-    }]
+    return [
+      {
+        target: '#sayhello',
+        type: 'click',
+        handler: () => this.helloMars(this.state.otherplanet, 'red')
+      },
+      {
+        target: '#savedata',
+        type: 'click',
+        handler: () => this.savedata(this.state)
+      }
+    ]
   }
 
   static get is () {
@@ -26,7 +33,11 @@ class HelloPlanet extends MyHeeBaseElement {
   }
 
   static get observedSSE () {
-    return ['changePlanet']
+    return [{
+      type: 'changePlanet',
+      hander: () => this.onChangePlanet
+
+    }]
   }
 
   get initialState () {
@@ -34,23 +45,30 @@ class HelloPlanet extends MyHeeBaseElement {
       otherplanet: 'Mars',
       greetings: 'Bye',
       planet: 'World',
-      hum: 'pepe'
+      hum: 'javi'
     }
   }
 
   ready () {} // Minimal HeeBaseElement implementation
 
   onChangePlanet (e) {
-    console.log('CHANGEPLANET', e)
-    this.setState(JSON.parse(e.data))
+    var data = JSON.parse(e.data)
+    this.planet = data.planet
+    this.planetcolor = 'red'
+    this.render()
   }
 
   helloMars (planet, planetcolor) {
-    this.postState({type: 'changePlanet', planetcolor, planet})
+    this.emit({type: 'changePlanet', planetcolor, planet})
+  }
+
+  savedata (data) {
+    data._id = 'state'
+    this.put(data)
   }
 
   get style () {
-    return (`
+    return `
             :host {
             color: blue
             }
@@ -63,16 +81,17 @@ class HelloPlanet extends MyHeeBaseElement {
             .green {
             color: green
             }
-            `)
+            `
   }
 
   get template () {
     return html`
                 <div>
-                    <span class="black">${this.state.greetings}?</span>
-                    <span class="${this.state.planetcolor ? this.state.planetcolor : 'green'}">${this.state.planet}</span>
+                    <span class="black">${this.greetings}?</span>
+                    <span class="${this.planetcolor ? this.planetcolor : 'green'}">${this.planet}</span>
                     <hr>
                 <button id="sayhello"> <slot name="buttonText">{{buttonText}}</slot> </button>
+                <button id="savedata"> <slot name="buttonText">Save Data</slot> </button>
                 
                 </div>
 

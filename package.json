@@ -1,23 +1,25 @@
 {
   "name": "hee",
-  "version": "1.0.8",
+  "version": "1.0.10",
   "description": "",
   "main": "index.mjs",
   "author": "Javi Santos <mail@javisantos.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node --experimental-modules --no-warnings server.mjs",
+    "start": "nodemon --experimental-modules server.mjs",
     "standard": "standard ./src/hee.mjs --fix"
   },
   "dependencies": {
     "chalk": "^2.4.1",
     "gradient-string": "^1.1.0",
     "log-symbols": "^2.2.0",
-    "mime-types": "^2.1.19",
+    "mime-types": "^2.1.20",
+    "nano": "^7.0.0",
+    "nodemon": "^1.18.4",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "node-minify": "^3.2.0",
+    "node-minify": "^3.4.0",
     "standard": "^11.0.1"
   }
 }
