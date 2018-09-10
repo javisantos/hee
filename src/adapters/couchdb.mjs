@@ -1,6 +1,6 @@
 import couchdbNano from 'nano'
 
-var nano = couchdbNano(
+var nano1 = couchdbNano(
   `http://${process.env.COUCHDB_USER}:${process.env.COUCHDB_PASSWORD}@${
     process.env.COUCHDB_HOST
   }:${process.env.COUCHDB_PORT}`
@@ -9,10 +9,11 @@ var nano = couchdbNano(
 class CouchDB {
   constructor(hash) {
     this.hash = hash
+    console.log('COUCHDB_HOST', process.env.COUCHDB_HOST)
     // this.create(hash)
   }
   async create(hash) {
-    await nano.db.create(hash)
+    await nano1.db.create(hash)
   }
 
   async put(doc) {
@@ -23,7 +24,7 @@ class CouchDB {
     }
 
     delete doc._type
-    await nano.use(this.hash).insert(doc)
+    await nano1.use(this.hash).insert(doc)
   }
 
   async get(id, params = {}) {

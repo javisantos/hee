@@ -19,14 +19,15 @@ const log = console.log
 var keys = new Map()
 
 class HttpEventEmitter extends EventEmitter {
-  constructor (port, options) {
+  constructor(port, options) {
     super()
     let hee = gradient.summer.multiline(
-      ['1.0.10',
+      [
+        
         '( )_( )( ___)( ___)',
         ' ) _ (  )__)  )__) ',
-        '(_) (_)(____)(____)',
-        ''
+        '(_) (_)(____)(____) v' + process.env.npm_package_version,
+        '',
       ].join('\n')
     )
 
@@ -38,7 +39,7 @@ class HttpEventEmitter extends EventEmitter {
     this.publicPath = options.publicPath ? options.publicPath : './public'
     const server = http2.createSecureServer({
       key: fs.readFileSync('./keys/localhost-privkey.pem'),
-      cert: fs.readFileSync('./keys/localhost-cert.pem')
+      cert: fs.readFileSync('./keys/localhost-cert.pem'),
     })
     log(
       icon.success,
@@ -54,7 +55,7 @@ class HttpEventEmitter extends EventEmitter {
     server.listen(port, '0.0.0.0', () => super.emit('ready'))
   }
 
-  parse (data) {
+  parse(data) {
     switch (this.encoding) {
       case 'json':
         return JSON.parse(data)
@@ -63,14 +64,13 @@ class HttpEventEmitter extends EventEmitter {
     }
   }
 
-  async onStream (stream, headers) {
-    console.log('STREAM!', headers[':method'])
+  async onStream(stream, headers) {
     stream.on('error', e => {
       log(icon.error, `[STREAM ${stream.id}]`, e)
     })
     if (headers[':path'] === '/') {
       stream.respond({
-        ':status': 200
+        ':status': 200,
       })
       stream.end('Http Event Emitter')
       return
@@ -78,7 +78,7 @@ class HttpEventEmitter extends EventEmitter {
     let commonHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, HEAD, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
     }
     log(icon.info, headers[':path'])
     var filePath =
@@ -90,7 +90,7 @@ class HttpEventEmitter extends EventEmitter {
       stream.respond(
         Object.assign({}, commonHeaders, {
           'Content-Type': mime.lookup(filePath),
-          'Content-Encoding': 'gzip'
+          'Content-Encoding': 'gzip',
         })
       )
 
@@ -113,7 +113,7 @@ class HttpEventEmitter extends EventEmitter {
         stream.respond(
           Object.assign({}, commonHeaders, {
             'Content-Length': '0',
-            ':status': 200
+            ':status': 200,
           })
         )
         stream.end()
@@ -121,18 +121,18 @@ class HttpEventEmitter extends EventEmitter {
     }
   }
 
-  async onGet (stream, headers) {
+  async onGet(stream, headers) {
     let commonHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, PUT, HEAD, PATCH, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization'
+      'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
     }
     stream.respond(
       Object.assign({}, commonHeaders, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'X-Accel-Buffering': 'no',
-        ':status': 200
+        ':status': 200,
       })
     )
 
@@ -157,7 +157,7 @@ class HttpEventEmitter extends EventEmitter {
     super.emit('subscription', stream.id, hash)
   }
 
-  onPost (stream, headers) {
+  onPost(stream, headers) {
     let hash = headers[':path'].slice(1)
     let body = ''
     stream
@@ -171,19 +171,19 @@ class HttpEventEmitter extends EventEmitter {
           parsed._type = parsed.type
           this.emit(stream.id, hash, parsed)
           stream.respond({
-            ':status': 202
+            ':status': 202,
           })
           stream.end()
         } catch (e) {
           stream.respond({
-            ':status': 400
+            ':status': 400,
           })
           stream.end()
         }
       })
   }
 
-  async onPut (stream, headers) {
+  async onPut(stream, headers) {
     let hash = headers[':path'].slice(1)
     let body = ''
     // TODO createWriteStream
@@ -206,21 +206,21 @@ class HttpEventEmitter extends EventEmitter {
           this.emit(stream.id, hash, parsed)
 
           stream.respond({
-            ':status': 201
+            ':status': 201,
           })
           stream.end()
           super.emit('put', Object.assign({data: parsed, hash}, {}))
         } catch (e) {
           log(icon.error, 'onPut', e)
           stream.respond({
-            ':status': 400
+            ':status': 400,
           })
           stream.end()
         }
       })
   }
 
-  async onHead (stream, headers) {
+  async onHead(stream, headers) {
     var self = this
     return new Promise(async (resolve, reject) => {
       try {
@@ -255,15 +255,15 @@ class HttpEventEmitter extends EventEmitter {
     })
   }
 
-  onPatch (stream, headers) {
+  onPatch(stream, headers) {
     // TODO modify only an attribute / merge
   }
 
-  onRequest (req, res) {
+  onRequest(req, res) {
     log(icon.info, 'REQUEST', req)
   }
 
-  async emit (actor, hash, payload) {
+  async emit(actor, hash, payload) {
     let UUID = uuidv4()
 
     var content = `actor: ${actor}\n${
@@ -278,7 +278,7 @@ class HttpEventEmitter extends EventEmitter {
     }
   }
 
-  async gc () {
+  async gc() {
     return new Promise(async (resolve, reject) => {
       try {
         keys.forEach((streams, key) => {
