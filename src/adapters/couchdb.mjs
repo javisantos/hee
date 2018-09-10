@@ -1,17 +1,21 @@
 import couchdbNano from 'nano'
 
-var nano = couchdbNano('http://admin:adminpass@localhost:5984')
+var nano = couchdbNano(
+  `http://${process.env.COUCHDB_USER}:${process.env.COUCHDB_PASSWORD}@${
+    process.env.COUCHDB_HOST
+  }:${process.env.COUCHDB_PORT}`
+)
 
 class CouchDB {
-  constructor (hash) {
+  constructor(hash) {
     this.hash = hash
     // this.create(hash)
   }
-  async create (hash) {
+  async create(hash) {
     await nano.db.create(hash)
   }
 
-  async put (doc) {
+  async put(doc) {
     var prevDoc = await this.get(doc._id)
 
     if (prevDoc) {
@@ -22,7 +26,7 @@ class CouchDB {
     await nano.use(this.hash).insert(doc)
   }
 
-  async get (id, params = {}) {
+  async get(id, params = {}) {
     let db = nano.use(this.hash)
     try {
       return await db.get(id, params)
