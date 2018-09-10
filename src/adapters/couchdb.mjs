@@ -1,4 +1,4 @@
-import couchdbNano from './../../node_modules/nano/'
+import couchdbNano from 'nano'
 
 var nano = couchdbNano('http://admin:adminpass@localhost:5984')
 
