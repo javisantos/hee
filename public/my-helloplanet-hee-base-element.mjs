@@ -23,7 +23,12 @@ class HelloPlanet extends MyHeeBaseElement {
       {
         target: '#savedata',
         type: 'click',
-        handler: () => this.savedata(this.state)
+        handler: () =>
+          this.savedata({
+            test: {test1: 'ok', test2: 'ok2'},
+            array1: ['var1', 'var2'],
+            arrayobj: [{hello1: 'hi', hello2: 'hey'}, {hello2: 'hi2', hello2: 'hi2'}]
+          })
       }
     ]
   }
@@ -33,11 +38,12 @@ class HelloPlanet extends MyHeeBaseElement {
   }
 
   static get observedSSE () {
-    return [{
-      type: 'changePlanet',
-      hander: () => this.onChangePlanet
-
-    }]
+    return [
+      {
+        type: 'changePlanet',
+        handler: () => this.onChangePlanet
+      }
+    ]
   }
 
   get initialState () {
@@ -52,6 +58,7 @@ class HelloPlanet extends MyHeeBaseElement {
   ready () {} // Minimal HeeBaseElement implementation
 
   onChangePlanet (e) {
+    console.log('toparse', e)
     var data = JSON.parse(e.data)
     this.planet = data.planet
     this.planetcolor = 'red'

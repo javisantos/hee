@@ -1,2 +1,2 @@
-import HttpEventEmitter from './src/hee2'
+import HttpEventEmitter from './src/hee'
 export default HttpEventEmitter

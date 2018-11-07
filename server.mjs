@@ -6,10 +6,14 @@ const hee = new HttpEventEmitter(8443, {
 })
 
 hee.on('subscription', hash => {
-  var message = {type: 'event', text: 'Hello world!'}
+  var message = { type: 'event', text: 'Hello world!' }
   hee.emit(hash, message)
 })
 
 hee.on('event', params => {
   console.log('New event', params)
+})
+
+hee.on('change', diffs => {
+  console.log('New change', diffs)
 })

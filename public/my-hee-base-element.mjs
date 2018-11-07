@@ -1,5 +1,5 @@
 /* global EventSource fetch  */
-import {MyBaseElement, html, helpers} from './my-base-element.mjs'
+import { MyBaseElement, html, helpers } from './my-base-element.mjs'
 
 class MyHeeBaseElement extends MyBaseElement {
   constructor () {
@@ -21,15 +21,19 @@ class MyHeeBaseElement extends MyBaseElement {
       window.eventSources.get(this.source).close()
     })
     window.addEventListener('load', event => {})
-    this.constructor.observedSSE.forEach(eventName => {
-      this.eventSource.addEventListener(eventName, event => {
-        let eventNameCapitalized = `on${eventName.replace(/^\w/, c =>
-          c.toUpperCase()
-        )}`
-        if (typeof this[eventNameCapitalized] === 'function') {
-          this[eventNameCapitalized](event)
+    this.constructor.observedSSE.forEach(SSevent => {
+      this.eventSource.addEventListener(
+        SSevent.type,
+        (handler = SSevent.handler) => {
+          let SSeventCapitalized = `on${SSevent.type.replace(/^\w/, c =>
+            c.toUpperCase()
+          )}`
+          if (typeof this[SSeventCapitalized] === 'function') {
+            this[SSeventCapitalized](event)
+          }
+          if (typeof handler === 'function') handler(event)
         }
-      })
+      )
     })
   }
 
@@ -90,4 +94,4 @@ class MyHeeBaseElement extends MyBaseElement {
   }
 }
 
-export {MyHeeBaseElement, html, helpers}
+export { MyHeeBaseElement, html, helpers }
